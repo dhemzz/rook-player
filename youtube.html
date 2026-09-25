@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!--
+  Rook's YouTube player page, served from GitHub Pages at
+  https://dhemzz.github.io/rook-player/youtube.html?v=<video id>&s=<session>
+  and loaded as the top-level page of the app's player web view, so YouTube
+  sees a real https origin (the page's own) instead of the app's local page.
+
+  Query: v = video ID (required), s = the app's session number (tags every
+  message), rook_cleanup=0 = passed to the player so the app's cleanup
+  script leaves YouTube's frame untouched.
+
+  To the app (window.webkit.messageHandlers.rookPlayer), as
+  { session, type, value, raw }: youtubePage, youtubeFrame, youtubeReady,
+  youtubeState, youtubeTime, youtubeMuted, youtubeError, hostAudioSession,
+  commandSent, and the app's frame-script messages relayed from YouTube's
+  frame. From the app: rook.post(message), rook.setAudioSession(type),
+  rook.unload().
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Rook player</title>
+<style>
+html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; }
+#youtube, #youtube iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; }
+</style>
+</head>
+<body>
+<div id="youtube"></div>
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  var videoID = params.get('v') || '';
+  var session = parseInt(params.get('s') || '0', 10) || 0;
+  var calls = ['playVideo', 'pauseVideo', 'seekTo', 'mute', 'unMute'];
+  var player = null, poll = null, last = {};
+
+  function send(type, value, raw) {
+    var handlers = window.webkit && window.webkit.messageHandlers;
+    if (!handlers || !handlers.rookPlayer) { return; }
+    handlers.rookPlayer.postMessage({
+      session: session,
+      type: type,
+      value: value === undefined ? null : value,
+      raw: raw === undefined ? null : raw
+    });
+  }
+  function describe(data) {
+    try { return typeof data === 'string' ? data : JSON.stringify(data); } catch (e) { return String(data); }
+  }
+
+  var page = { href: location.href, origin: location.origin, referrer: document.referrer, userAgent: navigator.userAgent };
+  send('youtubePage', page, describe(page));
+
+  if (!/^[A-Za-z0-9_-]{6,20}$/.test(videoID)) {
+    send('youtubeError', 'invalid video ID "' + videoID + '"');
+    return;
+  }
+
+  function frameWindow() {
+    var iframe = player && typeof player.getIframe === 'function' ? player.getIframe() : null;
+    return iframe ? iframe.contentWindow : null;
+  }
+  function describeFrame() {
+    var iframe = player && typeof player.getIframe === 'function' ? player.getIframe() : null;
+    var info = {
+      src: iframe ? iframe.src : null,
+      iframeReferrerPolicy: iframe ? iframe.referrerPolicy : null,
+      allow: iframe ? iframe.allow : null,
+      origin: location.origin,
+      href: location.href
+    };
+    send('youtubeFrame', info, describe(info));
+  }
+  function report() {
+    if (!player || typeof player.getCurrentTime !== 'function') { return; }
+    var time = player.getCurrentTime(), duration = player.getDuration(), muted = player.isMuted();
+    if (time !== last.time || duration !== last.duration) {
+      last.time = time;
+      last.duration = duration;
+      send('youtubeTime', { currentTime: time, duration: duration });
+    }
+    if (muted !== last.muted) {
+      last.muted = muted;
+      send('youtubeMuted', muted);
+    }
+  }
+
+  // YouTube's UI kept to a minimum, muted autoplay (the app unmutes once
+  // it's playing). origin must be this page's origin. Looping one video
+  // needs playlist=<id>.
+  var playerVars = {
+    autoplay: 1, mute: 1, playsinline: 1, loop: 1, playlist: videoID,
+    controls: 0, disablekb: 1, fs: 0, rel: 0, iv_load_policy: 3,
+    enablejsapi: 1, origin: location.origin
+  };
+  if (params.get('rook_cleanup') === '0') { playerVars.rook_cleanup = 0; }
+
+  window.onYouTubeIframeAPIReady = function () {
+    player = new YT.Player('youtube', {
+      videoId: videoID,
+      width: '100%',
+      height: '100%',
+      playerVars: playerVars,
+      events: {
+        onReady: function () {
+          describeFrame();
+          send('youtubeReady', { muted: player.isMuted(), duration: player.getDuration() });
+          poll = setInterval(report, 250);
+        },
+        onStateChange: function (event) {
+          send('youtubeState', event.data);
+          report();
+        },
+        onError: function (event) {
+          describeFrame();
+          send('youtubeError', event.data);
+        }
+      }
+    });
+  };
+
+  window.rook = {
+    post: function (message) {
+      if (message && message['x-rook-youtube']) {
+        var call = message.func, args = Array.isArray(message.args) ? message.args : [];
+        if (calls.indexOf(call) < 0 || !player || typeof player[call] !== 'function') {
+          send('commandSent', 'NOT SENT (YouTube player not ready) ' + describe(message));
+          return;
+        }
+        player[call].apply(player, args);
+        send('commandSent', 'YouTube ' + describe(message));
+        return;
+      }
+      var target = frameWindow();
+      if (!target) { send('commandSent', 'NOT SENT (no player frame) ' + describe(message)); return; }
+      target.postMessage(message, '*');
+      send('commandSent', describe(message));
+    },
+    // Audio Session API (WebKit): "ambient" follows the ring/silent switch,
+    // "playback" plays through it.
+    setAudioSession: function (type) {
+      if (navigator.audioSession) { navigator.audioSession.type = type; }
+      send('hostAudioSession', { type: type, supported: !!navigator.audioSession });
+      window.rook.post({ 'x-rook-command': true, type: 'audioSession', value: type });
+    },
+    unload: function () {
+      if (poll) { clearInterval(poll); poll = null; }
+      if (player) { try { player.destroy(); } catch (e) {} player = null; }
+      session = 0;
+    }
+  };
+
+  // Only the app's frame-script messages from YouTube's frame are relayed;
+  // the IFrame API handles its own traffic.
+  window.addEventListener('message', function (event) {
+    var data = event.data;
+    if (!frameWindow() || event.source !== frameWindow()) { return; }
+    if (!data || typeof data !== 'object' || !data['x-rook-player'] || typeof data.type !== 'string') { return; }
+    send(data.type, data.value, describe(data));
+  });
+
+  var script = document.createElement('script');
+  script.src = 'https://www.youtube.com/iframe_api';
+  script.onerror = function () { send('youtubeError', 'iframe_api failed to load'); };
+  document.head.appendChild(script);
+})();
+</script>
+</body>
+</html>
