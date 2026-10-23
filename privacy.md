@@ -73,4 +73,4 @@ If this policy changes, we will update this page and the date above.
 
 ## Contact
 
-Questions: tyedheming@gmail.com
+Questions: hello@withrook.app
