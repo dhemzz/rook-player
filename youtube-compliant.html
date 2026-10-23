@@ -35,7 +35,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: transparent;
   var videoID = params.get('v') || '';
   var session = parseInt(params.get('s') || '0', 10) || 0;
   var cueOnly = params.get('cue') === '1';
-  var calls = ['playVideo', 'pauseVideo', 'seekTo', 'mute', 'unMute'];
+  var calls = ['playVideo', 'pauseVideo', 'seekTo', 'mute', 'unMute', 'setPlaybackRate'];
   var player = null, poll = null, last = {};
 
   function send(type, value, raw) {
