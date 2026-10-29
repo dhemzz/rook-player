@@ -4,18 +4,18 @@ title: Rook Privacy Policy
 
 # Rook Privacy Policy
 
-Last updated: October 26, 2026
+Last updated: October 29, 2026
 
 Rook saves videos and posts you share to it from TikTok, YouTube and Instagram. It breaks them down with AI and brings them back to you later. This page explains what data Rook uses, who processes it, and the choices you have.
 
 ## What we collect
 
 - **Account info:** your email address, plus your name if you sign in with Apple or Google.
-- **Your saves:** the links you share to Rook, and the notes, albums, reminders and Ask questions you create.
+- **Your saves:** the links you share to Rook, and the notes, albums, reminders and Ask questions you create. Reminders are kept with your account so a new phone gets them back.
 - **Breakdowns of your saves:** to break a save down, Rook reads the post's title, caption and details, and what is said or shown in the video (a transcript or the video itself). We keep the breakdown and use the transcript only to power search inside your own saves.
 - **Searches:** what you type into search, so we can find matching saves.
 - **Rook Pro purchases:** if you subscribe, Apple tells us your subscription, its status and when it renews or ends. Payment is handled entirely by Apple; we never see your card details.
-- **Your location, only if you turn it on:** when you turn on location for Rook, your phone sends where it is with each Ask question, so Ask can tell you how far your saved places are and how long it takes to get there. It is used for that answer only and is never stored.
+- **Your location, only if you turn it on:** when you turn on location for Rook, your phone sends where it is with each Ask question, so Ask can tell you how far your saved places are and how long it takes to get there. It is used for that answer only and is never stored. If you turn on "Saved spot nearby" or "New city" in Notifications, your phone itself watches for a few of your saved places and shows the notification when you arrive; Rook never learns where you are or where you went.
 - **Feedback:** messages you send us from the app.
 - **Diagnostics:** crash reports and error logs from your device and our servers, so we can fix problems and keep costs under control.
 - **How you use the app:** which screens and cards you open and which features you use, linked to your account. We use it to improve Rook and so Ask can answer questions like what you have watched. It never includes your notes, titles, links, searches or Ask text. You can turn it off any time in Account under "Help improve Rook".
@@ -27,7 +27,7 @@ We do not collect your contacts, photos or browsing history, and we never store 
 - To sign you in and keep your saves synced across devices.
 - To create breakdowns, key points, timestamps and recipe or workout cards for each save.
 - To answer your Ask questions about your own saves, and to search your saves.
-- To send the reminders you choose.
+- To send the reminders you choose, and the notifications you leave on in Account under Notifications (at most one a day).
 - To provide Rook Pro and check your subscription.
 
 ## AI and other services that process your data
@@ -40,7 +40,7 @@ Rook asks for your permission before any of your saves are sent to AI services. 
 - **Google (YouTube Data API):** fetches YouTube video details.
 - **Supabase:** hosting, database and sign-in.
 - **Sentry:** receives crash reports (what crashed, device model, iOS version and app build) so we can fix crashes. It never includes your saves, notes or account details. You can turn it off in Account under "Help improve Rook".
-- **Apple:** sign in with Apple, purchases and subscriptions. Apple Maps finds where the places in your saves are, and, when you turn on location, how far they are from you.
+- **Apple:** sign in with Apple, purchases, subscriptions and push notifications. Apple Maps finds where the places in your saves are, and, when you turn on location, how far they are from you.
 
 These services receive only what they need to do their job for Rook, and they are required to protect your data at least as well as this policy does. Rook does not store copies of the videos you save. Videos play through each platform's own player, and that platform's privacy policy applies while you watch.
 
