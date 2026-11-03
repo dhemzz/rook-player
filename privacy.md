@@ -76,3 +76,5 @@ If this policy changes, we will update this page and the date above.
 ## Contact
 
 Questions: hello@withrook.app
+
+See also our [Terms of Use](https://dhemzz.github.io/rook-player/terms.html).
