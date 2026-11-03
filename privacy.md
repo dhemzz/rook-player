@@ -4,7 +4,7 @@ title: Rook Privacy Policy
 
 # Rook Privacy Policy
 
-Last updated: October 29, 2026
+Last updated: November 2, 2026
 
 Rook saves videos and posts you share to it from TikTok, YouTube and Instagram. It breaks them down with AI and brings them back to you later. This page explains what data Rook uses, who processes it, and the choices you have.
 
@@ -40,6 +40,7 @@ Rook asks for your permission before any of your saves are sent to AI services. 
 - **Google (YouTube Data API):** fetches YouTube video details.
 - **Supabase:** hosting, database and sign-in.
 - **Sentry:** receives crash reports (what crashed, device model, iOS version and app build) so we can fix crashes. It never includes your saves, notes or account details. You can turn it off in Account under "Help improve Rook".
+- **PostHog:** for a limited time, may receive a masked screen recording of the set-up walkthrough when a new account first opens Rook, so we can see where people get stuck. It stops before your first save appears and never includes your saves, videos, pictures or anything you type, and it is not linked to your account. You can turn it off in Account under "Help improve Rook".
 - **Apple:** sign in with Apple, purchases, subscriptions and push notifications. Apple Maps finds where the places in your saves are, and, when you turn on location, how far they are from you.
 
 These services receive only what they need to do their job for Rook, and they are required to protect your data at least as well as this policy does. Rook does not store copies of the videos you save. Videos play through each platform's own player, and that platform's privacy policy applies while you watch.
@@ -56,7 +57,7 @@ Other Rook users cannot see your saves.
 
 ## How long we keep it
 
-We keep your account, saves, breakdowns and notes until you delete them or your account. Usage data is deleted after 180 days. Diagnostics and AI processing logs are kept only as long as needed to run and fix the service, and are deleted with your account. Crash reports sent to Sentry are not linked to your account and are deleted after 30 days.
+We keep your account, saves, breakdowns and notes until you delete them or your account. Usage data is deleted after 180 days. Diagnostics and AI processing logs are kept only as long as needed to run and fix the service, and are deleted with your account. Crash reports sent to Sentry are not linked to your account and are deleted after 30 days. Set-up recordings sent to PostHog are not linked to your account and are deleted after 30 days.
 
 ## Your choices and deleting your data
 
